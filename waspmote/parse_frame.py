@@ -18,6 +18,14 @@ class frameObj(object):
         self.humb = np.nan
 
 def read_wasp_data(file):
+    '''
+    function to parse frames saved in a text file
+    S. Filhol
+
+    :param file: file path to read
+    :return: a dataframe containing all parsed frames
+
+    '''
     f = open(file)
     data = pd.DataFrame()
     for line in f:
@@ -48,7 +56,6 @@ def read_wasp_data(file):
             data = data.append(frame.__dict__, ignore_index=True)
 
     return data
-
 
 # Include script in this if statement
 if __name__ == '__main__':

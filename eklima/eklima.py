@@ -13,6 +13,13 @@ eklima_terminology = {'St.no':'statoinID','Year':'year','Mnth':'month','Date':'d
                       'SA':'snow_depth','SD':'snow_cover','TA':'air_temp','WW':'weather','DD':'wind_dir','FF':'wind_speed'}
 
 def import_eklima(myfile):
+    '''
+    Function to import data from an Eklima text file into a dataframe format.
+    S. Filhol, July 2017
+
+    :param myfile: path to an Eklima csv file with tab delimiter
+    :return: a dataframe
+    '''
     data = pd.read_csv(myfile, skiprows=33, sep="\t", skipfooter=25, engine='python')
     colname = []
     for col in data.columns:
@@ -81,13 +88,28 @@ def wind_hist2D(u=None, v=None, Ws=None, Wd=None, plot=False, xmin=-30, xmax=30,
 
     return H, xedges, yedges
 
-def wind_kde2D(u=None, v=None, Ws=None, Wd=None, plot=False, xmin=-30, xmax=30, ymin=-30, ymax=30, nbins=60):
+def wind_kde2D(u=None, v=None, Ws=None, Wd=None, plot=False, Umin=-30, Umax=30, Vmin=-30, Vmax=30, nbins=60):
+    '''
+    Function to derive (and optionally plot) a 2D kernel distribution estimation of the wind vector (U, V).
+
+    :param u: u-component of wind velocity
+    :param v: v-component of wind velocity
+    :param Ws: wind speed (optional if u and v component are not known)
+    :param Wd: wind direction (optional if u and v component are not known)
+    :param plot: boolean to plot the estimated probability distribution
+    :param Umin:
+    :param Umax:
+    :param Vmin:
+    :param Vmax:
+    :param nbins:
+    :return:
+    '''
 
     if Ws is not None and Wd is not None:
         v = np.cos((Wd) * np.pi/180) * Ws
         u = np.sin((Wd) * np.pi/180) * Ws
 
-    vv, uu = np.meshgrid(np.linspace(xmin, xmax, nbins), np.linspace(ymin, ymax, nbins))
+    vv, uu = np.meshgrid(np.linspace(Umin, Umax, nbins), np.linspace(Vmin, Vmax, nbins))
     positions = np.vstack([vv.ravel(), uu.ravel()])
     values = np.vstack([v, u])
     values = values.T[~np.isnan(values.T).any(axis=1)]
@@ -97,12 +119,12 @@ def wind_kde2D(u=None, v=None, Ws=None, Wd=None, plot=False, xmin=-30, xmax=30, 
     if plot:
         fig = plt.figure()
         ax = fig.gca()
-        ax.set_xlim(xmin, xmax)
-        ax.set_ylim(ymin, ymax)
+        ax.set_xlim(Umin, Umax)
+        ax.set_ylim(Vmin, Vmax)
         # Contourf plot
         #cfset = ax.contourf(vv, uu, f, cmap='Blues')
         ## Or kernel density estimate plot instead of the contourf plot
-        ax.imshow(np.rot90(f), cmap='terrain', extent=[xmin, xmax, ymin, ymax])
+        ax.imshow(np.rot90(f), cmap='terrain', extent=[Umin, Umax, Vmin, Vmax])
         # Contour plot
         cset = ax.contour(uu, vv, f, colors='k')
         # Label plot
@@ -111,8 +133,8 @@ def wind_kde2D(u=None, v=None, Ws=None, Wd=None, plot=False, xmin=-30, xmax=30, 
         ax.set_ylabel('U')
 
         ## Code to add circles of windspeed
-        # x = np.linspace(xmin, xmax, 180)
-        # y = np.linspace(ymin, ymax, 180)
+        # x = np.linspace(Umin, Umax, 180)
+        # y = np.linspace(Vmin, Vmax, 180)
         # X, Y = np.meshgrid(x, y)
         # S = np.sqrt(X ** 2 + Y ** 2)
         # Cspeed = ax.contour(uu, vv, S, vmin=0, vmax=30, linewidth=0.2, colors='k')

@@ -8,6 +8,16 @@ import matplotlib.pyplot as plt
 # Include class and function here
 
 def CR6_load(filelist, mypath=None):
+    '''
+    function to load files from CR6 campbell logger
+    S. Filhol
+
+    change to Astrid's method of filename pattern isntead of filelist
+
+    :param filelist: list of filename of papth
+    :param mypath: path to folder containing the file
+    :return: return a dataframe with data, and a list of units for each column
+    '''
 
     # leser campbell data-filer og returnerer DataFrame
     def read_campbell(fil, path=None):
