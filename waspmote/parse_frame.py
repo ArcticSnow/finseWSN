@@ -59,3 +59,4 @@ def read_wasp_data(file):
 
 # Include script in this if statement
 if __name__ == '__main__':
+    print 'nothing there'

@@ -91,6 +91,7 @@ def wind_hist2D(u=None, v=None, Ws=None, Wd=None, plot=False, xmin=-30, xmax=30,
 def wind_kde2D(u=None, v=None, Ws=None, Wd=None, plot=False, Umin=-30, Umax=30, Vmin=-30, Vmax=30, nbins=60):
     '''
     Function to derive (and optionally plot) a 2D kernel distribution estimation of the wind vector (U, V).
+    S. Filhol, july 2017
 
     :param u: u-component of wind velocity
     :param v: v-component of wind velocity
@@ -101,8 +102,8 @@ def wind_kde2D(u=None, v=None, Ws=None, Wd=None, plot=False, Umin=-30, Umax=30, 
     :param Umax:
     :param Vmin:
     :param Vmax:
-    :param nbins:
-    :return:
+    :param nbins: number of bins
+    :return: 2d array of the KDE values
     '''
 
     if Ws is not None and Wd is not None:
@@ -148,3 +149,4 @@ def wind_kde2D(u=None, v=None, Ws=None, Wd=None, plot=False, Umin=-30, Umax=30, 
 
 # Include script in this if statement
 if __name__ == '__main__':
+    print 'ciao!'
