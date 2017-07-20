@@ -12,9 +12,12 @@ Submodules for each type of platform generating data:
 
  - Waspmote
 - flux station
+- remote sensing
+- ?climate model products? 
 - ?databases?
-- ?remote sensing?
 - ...
+
+
 
 
 
