@@ -4,8 +4,10 @@ Created on Wed Jul 19 18:17:11 2017
 
 @author: astridva
 
+
 """
 import pandas as pd
+import numpy as np
 import os.path
 import glob
 
@@ -24,8 +26,8 @@ def load_metdata(mypath,filename_pattern='Data_',biomet=False,sub_dir=True):
     (e.g project/data/CR6) 
     
     filename_pattern: str
-    pattern of filename to be recognized in folder (e.g. 'Data_' or 
-    'biomet.data')
+    pattern of filename to be recognized in folder (e.g. 'Data_'). If 
+    biomet=True filename_pattern does not need to be set in function call.
     
     biomet: boolean
     True if data is in licor's biomet.data file format. Default is False.
@@ -43,7 +45,9 @@ def load_metdata(mypath,filename_pattern='Data_',biomet=False,sub_dir=True):
     time units changes. Lot of potential for improvement here.
     """
     
-    
+    if biomet:
+        filename_pattern='biomet.dat'
+        
     if sub_dir:
         undermapper=os.listdir(mypath)
         frames=[]
@@ -147,7 +151,7 @@ def les_TOA5(fil):
     #print('Reading file: '+fil)
     columns=pd.read_csv(fil, sep=',',header=None,skiprows=1,nrows=1)
     data=pd.read_table(fil,sep=',',index_col=0,parse_dates=True,header=None,
-                      dtype='a',skiprows=4, names=columns.iloc[0],
+                      dtype=np.float64,skiprows=4, names=columns.iloc[0],
                       na_values=[-99999,-99.9,'NAN','-INF','INF'],engine='c')   
     units=pd.read_csv(fil,sep=',',header=None,skiprows=2,nrows=1)
     units.columns=columns.iloc[0].tolist()
@@ -170,7 +174,7 @@ def les_biomet(fil):
     df of units 
     """
     kols=['DATE','TIME','LWIN_1_1_1(W/m^2)', 'LWOUT_1_1_1(W/m^2)','PA_1_1_1(kPa)', 'RH_1_1_1(%)',
-          'RN_1_1_1(W/m^2)', 'SHF_1_1_1(W/m^2)','SHF_2_1_1(W/m^2)',
+          'SHF_1_1_1(W/m^2)','SHF_2_1_1(W/m^2)',
           'SWIN_1_1_1(W/m^2)', 'SWOUT_1_1_1(W/m^2)','TA_1_1_0(C)', 'TA_1_2_1(C)',
           'TSS_1_1_1(C)', 'TS_1_1_1(C)', 'TS_2_1_1(C)', 'TS_3_1_1(C)',
           'WD_1_1_1(degrees)', 'WS_1_1_1(m/s)']  
@@ -186,9 +190,10 @@ def les_biomet(fil):
         u=(name[name.find("(")+1:name.find(")")])
         units.append(u)
     units=pd.DataFrame([units],columns=data.columns)
+    ##CHECK IF VARIABLES REALLY ARE FROM SAME SENSOR. 
     new_cols={'LWIN_1_1_1(W/m^2)': 'Rl_downwell', 'LWOUT_1_1_1(W/m^2)': 'Rl_upwell',
                     'SWIN_1_1_1(W/m^2)': 'Rs_downwell', 'SWOUT_1_1_1(W/m^2)': 'Rs_upwell',
-                    'RN_1_1_1(W/m^2)': 'Rn', 'TSS_1_1_1(C)': 'TSS_1477', 'SHF_1_1_1(W/m^2)': 'Heatflux_1',
+                    'TSS_1_1_1(C)': 'TSS_1477', 'SHF_1_1_1(W/m^2)': 'Heatflux_1',
                     'SHF_2_1_1(W/m^2)': 'Heatflux_2', 'TA_1_1_0(C)': 'T_a_1477', 'TA_1_2_1(C)': 'T_b_1477',
                     'TS_3_1_1(C)': 'CS650_Temp', 'TS_2_1_1(C)': 'Tsoil', 'TS_1_1_1(C)': 'T_TJ_1477',
                     'WD_1_1_1(degrees)': 'D_g_1477', 'WS_1_1_1(m/s)': 'F_1_s_g_1477', 'RH_1_1_1(%)': 'U_1477',
