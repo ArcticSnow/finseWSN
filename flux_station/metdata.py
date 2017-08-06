@@ -72,7 +72,7 @@ def load_metdata(mypath,filename_pattern='Data_',biomet=False,sub_dir=True):
             data=[]
         unitlist=[]
         print('No files in '+mypath+' matched given filename_pattern')
-            
+    data=data[~data.index.duplicated()]        
     return data,unitlist
     
 def samla(filer,biomet=False):
@@ -149,12 +149,10 @@ def les_TOA5(fil):
     df of units 
     """
     #print('Reading file: '+fil)
-    columns=pd.read_csv(fil, sep=',',header=None,skiprows=1,nrows=1)
-    data=pd.read_table(fil,sep=',',index_col=0,parse_dates=True,header=None,
-                      dtype=np.float64,skiprows=4, names=columns.iloc[0],
+    data=pd.read_table(fil,sep=',',index_col=0,parse_dates=True,header=1,
+                      dtype=np.float64, skiprows=[2,3],
                       na_values=[-99999,-99.9,'NAN','-INF','INF'],engine='c')   
-    units=pd.read_csv(fil,sep=',',header=None,skiprows=2,nrows=1)
-    units.columns=columns.iloc[0].tolist()
+    units=pd.read_csv(fil,sep=',',header=1,nrows=1)
     return data,units
 
 def les_biomet(fil):
@@ -178,7 +176,7 @@ def les_biomet(fil):
           'SWIN_1_1_1(W/m^2)', 'SWOUT_1_1_1(W/m^2)','TA_1_1_0(C)', 'TA_1_2_1(C)',
           'TSS_1_1_1(C)', 'TS_1_1_1(C)', 'TS_2_1_1(C)', 'TS_3_1_1(C)',
           'WD_1_1_1(degrees)', 'WS_1_1_1(m/s)']  
-    data = pd.read_table(fil, sep='\t', header=3, skiprows=2,usecols=kols,
+    data = pd.read_table(fil, sep='\t', header=5, usecols=kols,
                          na_values=[-9999],dtype='str')
     data['TIMESTAMP']=pd.to_datetime(data['DATE'] + ' ' + data['TIME'].str[:8],
         format='%Y-%m-%d %H:%M:%S')    
