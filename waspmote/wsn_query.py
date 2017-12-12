@@ -77,7 +77,35 @@ def query_df(limit=100, offset=0, mote=None, sensor=None, tst__gte=None, tst__lt
     response.raise_for_status()
     resp = response.json()
 
-    return json_normalize(resp['results'])
+    df = json_normalize(resp['results'])  # convert json object to pandas dataframe
+    df['timestamp'] = df.to_datetime(df.epoch, units='s')
+    return df
+
+
+def query2csv(filepath, sep=',', ret=False, limit=100, offset=0, mote=None, sensor=None, tst__gte=None, tst__lte=None):
+    '''
+    Function to query hycamp.org for WSN database and save data into a csv file to a specified path and filename
+
+    :param filepath: path and filename
+    :param sep: csv separator type (see documentation of pandas to_csv()
+    :param ret: boolean for returning a data frame object or not
+    :param limit: number of records to query. Ordered from most recent
+    :param offset: number of most recent records to skip
+    :param mote: Waspmote ID
+    :param sensor: sensor tag
+    :param tst__gte: timestamp with the following format: '%Y-%m-%dT%H:%M:%S+00:00'
+    :param tst__lte: timestamp with the following format: '%Y-%m-%dT%H:%M:%S+00:00'
+    :return:
+    '''
+    try:
+        df = query_df(limit=limit, offset=offset, mote=mote, sensor=sensor, tst__gte=tst__gte, tst__lte=tst__lte)
+        df.to_csv(filepath, sep=sep)
+        print('=========')
+        print('Data saved to ' + filepath
+        if ret:
+            return df
+    except:
+        print('ERROR: query2csv() not successful')
 
 
 if __name__ == '__main__':
@@ -86,10 +114,12 @@ if __name__ == '__main__':
         print("Define the WSN_TOKEN environment variable.")
     else:
         response = query_df(
-            limit=100,
-            mote=161398434909148276,
-            tst__gte=datetime.datetime(2017, 12, 1)
+            limit=10000,
+            #mote=161398434909148276,
+            #tst__gte=datetime.datetime(2017, 12, 1)
         )
         pprint.pprint(response)
+        response.to_csv('waspmote_test.csv')
+
 
 
