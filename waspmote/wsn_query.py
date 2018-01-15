@@ -21,7 +21,7 @@ def get_token():
         sys.exit(1)
 
 
-def query(limit=100, offset=0, mote=None, sensor=None, tst__gte=None, tst__lte=None):
+def query(limit=100, offset=0, mote=None, xbee=None, sensor=None, tst__gte=None, tst__lte=None, debug=False):
     '''
     Function to query the WSN database and return a Json object
     :param limit: number of records to query. Ordered from most recent
@@ -42,6 +42,7 @@ def query(limit=100, offset=0, mote=None, sensor=None, tst__gte=None, tst__lte=N
         'limit': limit,
         'offset': offset,
         'mote': mote,
+        'xbee': xbee,
         'sensor': sensor,
         'tst__gte': tst__gte,
         'tst__lte': tst__lte,
@@ -51,10 +52,18 @@ def query(limit=100, offset=0, mote=None, sensor=None, tst__gte=None, tst__lte=N
     headers = {'Authorization': 'Token %s' % get_token()}
     response = requests.get(URL, headers=headers, params=params)
     response.raise_for_status()
-    return response.json()
+    myjson = response.json()
+
+    # Debug
+    if debug:
+        pprint.pprint(params)
+        pprint.pprint(myjson)
+        print()
+
+    return myjson
 
 
-def query_df(limit=100, offset=0, mote=None, sensor=None, tst__gte=None, tst__lte=None):
+def query_df(limit=100, offset=0, mote=None, xbee=None, sensor=None, tst__gte=None, tst__lte=None, debug=False):
     '''
     Function to query the WSN database and return data as a Pandas dataframe
     :param limit: number of records to query. Ordered from most recent
@@ -65,34 +74,19 @@ def query_df(limit=100, offset=0, mote=None, sensor=None, tst__gte=None, tst__lt
     :param tst__lte: timestamp with the following format: '%Y-%m-%dT%H:%M:%S+00:00'
     :return:  a json variable
     '''
-    # Paramters
-    if tst__gte:
-        tst__gte = tst__gte.strftime('%Y-%m-%dT%H:%M:%S+00:00')
-    if tst__lte:
-        tst__lte = tst__lte.strftime('%Y-%m-%dT%H:%M:%S+00:00')
 
-    params = {
-        'limit': limit,
-        'offset': offset,
-        'mote': mote,
-        'sensor': sensor,
-        'tst__gte': tst__gte,
-        'tst__lte': tst__lte,
-    }
+    resp = query(limit, offset, mote, xbee, sensor, tst__gte, tst__lte, debug)
 
-    # Query
-
-    headers = {'Authorization': 'Token %s' % get_token()}
-    response = requests.get(URL, headers=headers, params=params)
-    response.raise_for_status()
-    resp = response.json()
 
     df = json_normalize(resp['results'])  # convert json object to pandas dataframe
-    df['timestamp'] = pd.to_datetime(df.epoch, unit='s')
+    try:
+        df['timestamp'] = pd.to_datetime(df.epoch, unit='s')
+    except:
+        print('WARNING: no epoch')
     return df
 
 
-def query2csv(filepath, sep=',', ret=False, limit=100, offset=0, mote=None, sensor=None, tst__gte=None, tst__lte=None):
+def query2csv(filepath, sep=',', ret=False, limit=100, offset=0, mote=None, xbee=None, sensor=None, tst__gte=None, tst__lte=None):
     '''
     Function to query hycamp.org for WSN database and save data into a csv file to a specified path and filename
 
@@ -108,7 +102,7 @@ def query2csv(filepath, sep=',', ret=False, limit=100, offset=0, mote=None, sens
     :return:
     '''
     try:
-        df = query_df(limit=limit, offset=offset, mote=mote, sensor=sensor, tst__gte=tst__gte, tst__lte=tst__lte)
+        df = query_df(limit=limit, offset=offset, mote=mote, xbee=xbee, sensor=sensor, tst__gte=tst__gte, tst__lte=tst__lte, debug=False)
         df.to_csv(filepath, sep=sep)
         print('=========')
         print('Data saved to ' + filepath)
