@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datetime as dt
 import wsn_query as wq
+import matplotlib.dates as mdates
 
 '''
 Set of functions to plot data collected by the Weather Station Network in Finse as saved in the hycamp.org database at UiO.
@@ -90,32 +91,40 @@ json_normalize(resp['results'])
 
     gr = df.groupby(by='mote')
     mote_df = gr.get_group(mote)
+    mote_df.timestamp = pd.to_datetime(mote_df.timestamp)
+    mote_df = mote_df.set_index(mote_df.timestamp)
+    print(mote_df.head())
 
+
+    myFmt = mdates.DateFormatter('%m-%d')
 
     fig, axes = plt.subplots(sensors.__len__(), 1, sharex=True)
+    #fig.autofmt_xdate()
     for i, ax in enumerate(axes):
         ax.plot(mote_df.timestamp[mote_df.sensor == sensors[i]], mote_df.value[mote_df.sensor==sensors[i]])
         ax.set_ylabel(sensors[i])
+        #ax.xaxis.set_major_formatter(myFmt)
 
 
 if __name__ == '__main__':
 
     # query the hycamp.org database
-    data = wq.query_df(limit=1000)
+    data = wq.query_df(limit=5000)
 
     # print to console all waspmote IDs and
     print_mote_sensor(data)
 
     # plot data
     plot_mote(data)
-    plot_mote(data, sensors=['ds2_speed', 'ds2_dir'])
+    plt.show()
+    # plot_mote(data, sensors=['ds2_speed', 'ds2_dir'])
 
-    # plot data for one particualr sensor
-    plot_sensor(data)
-    plot_sensor(data, sensor='bat')
-
-    # example from csv file:
-    try:
-        df = pd.read_csv('waspmote/waspmote_test.csv')
-        plot_sensor(df)
+    # # plot data for one particualr sensor
+    # plot_sensor(data)
+    # plot_sensor(data, sensor='bat')
+    #
+    # # example from csv file:
+    # try:
+    #     df = pd.read_csv('waspmote/waspmote_test.csv')
+    #     plot_sensor(df)
 

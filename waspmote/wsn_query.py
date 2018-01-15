@@ -1,8 +1,9 @@
 import datetime
-import os
+import os, sys
 import pprint
 import requests
 from pandas.io.json import json_normalize
+import pandas as pd
 
 '''
 Example script to query data from hycamp.org WSN database.
@@ -10,6 +11,14 @@ Example script to query data from hycamp.org WSN database.
 
 
 URL = 'http://hycamp.org/wsn/api/query/'
+
+def get_token():
+    try:
+        token = os.environ['WSN_TOKEN']
+        return token
+    except KeyError:
+        print "Please set the environment variable WSN_TOKEN in .bashrc as follow: \n\t export WSN_TOKEN=xxxxxxxxxxxxxxxxx "
+        sys.exit(1)
 
 
 def query(limit=100, offset=0, mote=None, sensor=None, tst__gte=None, tst__lte=None):
@@ -39,7 +48,7 @@ def query(limit=100, offset=0, mote=None, sensor=None, tst__gte=None, tst__lte=N
     }
 
     # Query
-    headers = {'Authorization': 'Token %s' % TOKEN}
+    headers = {'Authorization': 'Token %s' % get_token()}
     response = requests.get(URL, headers=headers, params=params)
     response.raise_for_status()
     return response.json()
@@ -72,13 +81,14 @@ def query_df(limit=100, offset=0, mote=None, sensor=None, tst__gte=None, tst__lt
     }
 
     # Query
-    headers = {'Authorization': 'Token %s' % TOKEN}
+
+    headers = {'Authorization': 'Token %s' % get_token()}
     response = requests.get(URL, headers=headers, params=params)
     response.raise_for_status()
     resp = response.json()
 
     df = json_normalize(resp['results'])  # convert json object to pandas dataframe
-    df['timestamp'] = df.to_datetime(df.epoch, units='s')
+    df['timestamp'] = pd.to_datetime(df.epoch, unit='s')
     return df
 
 
@@ -101,9 +111,11 @@ def query2csv(filepath, sep=',', ret=False, limit=100, offset=0, mote=None, sens
         df = query_df(limit=limit, offset=offset, mote=mote, sensor=sensor, tst__gte=tst__gte, tst__lte=tst__lte)
         df.to_csv(filepath, sep=sep)
         print('=========')
-        print('Data saved to ' + filepath
+        print('Data saved to ' + filepath)
+
         if ret:
             return df
+
     except:
         print('ERROR: query2csv() not successful')
 
