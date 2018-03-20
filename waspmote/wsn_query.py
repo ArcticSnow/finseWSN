@@ -25,7 +25,7 @@ def query(
         time__lte = time__lte.timestamp()
 
     params = {
-        'limit': limit, 'offset': offset,               # Pagination
+        'limit': limit,               # Pagination
         'time__gte': time__gte, 'time__lte': time__lte, # Time filter
         'fields': fields,
         'tags': tags,
@@ -47,6 +47,7 @@ def query(
 
     # Query
     headers = {'Authorization': 'Token %s' % TOKEN}
+    print(params)
     response = requests.get(URL, headers=headers, params=params)
     response.raise_for_status()
     json = response.json()
@@ -69,11 +70,11 @@ def get_token():
 
 
 
-def query_df(limit=100, offset=0, serial=None, fields=None, tags=None, tst__gte=None, tst__lte=None, debug=False):
+def query_df(limit=100, serial=None, fields=None, tags=None, tst__gte=None, tst__lte=None, debug=False):
 
     # Paramters
     resp = query(
-        limit=limit, offset=offset, serial=serial,  fields=fields,  tags=tags,  debug=debug,  time__gte=tst__gte, time__lte=tst__lte)
+        limit=limit, serial=serial,  fields=fields,  tags=tags,  debug=debug,  time__gte=tst__gte, time__lte=tst__lte)
 
     df = json_normalize(resp['results'])  # convert json object to pandas dataframe
     try:
