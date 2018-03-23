@@ -7,16 +7,27 @@ import pandas as pd
 
 URL = 'https://hycamp.org/wsn/api/query/v2/'
 #URL = 'http://localhost:8000/wsn/api/query/v2/'
-TOKEN = os.getenv('WSN_TOKEN', 'dcff0c629050b5492362ec28173fa3e051648cb1')
+TOKEN = os.getenv('WSN_TOKEN')
 
 def query(
-    limit=100, offset=0, # Pagination
+    limit=100, # Pagination
     fields=None,         # Fields to return (all by default)
     tags=None,           # Tags to return (all by default)
     debug=False,         # Not sent to the API
     # Filters
     time__gte=None, time__lte=None, # Time is special
     **kw):
+    '''
+
+    :param limit: number of frame to download from now unitl limit
+    :param fields: which frame field to return
+    :param tags:
+    :param debug:
+    :param time__gte: start date to downlaod (in datetime format) (gte = great than equal)
+    :param time__lte: end date to download (in datetime format)   (lte = less than equal)
+    :param kw: orther query parameter such as serial (waspmote serial number)
+    :return: a Json object containing the requested data to the server
+    '''
 
     # Parameters
     if time__gte:
@@ -65,7 +76,7 @@ def get_token():
         token = os.environ['WSN_TOKEN']
         return token
     except KeyError:
-        print "Please set the environment variable WSN_TOKEN in .bashrc as follow: \n\t export WSN_TOKEN=xxxxxxxxxxxxxxxxx "
+        print("Please set the environment variable WSN_TOKEN in .bashrc as follow: \n\t export WSN_TOKEN=xxxxxxxxxxxxxxxxx ")
         sys.exit(1)
 
 
