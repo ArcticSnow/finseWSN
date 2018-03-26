@@ -79,20 +79,87 @@ def get_token():
         print("Please set the environment variable WSN_TOKEN in .bashrc as follow: \n\t export WSN_TOKEN=xxxxxxxxxxxxxxxxx ")
         sys.exit(1)
 
+def query_df(
+    limit=100, # Pagination
+    fields=None,         # Fields to return (all by default)
+    tags=None,           # Tags to return (all by default)
+    debug=False,         # Not sent to the API
+    # Filters
+    time__gte=None, time__lte=None, # Time is special
+    **kw):
+    '''
 
+    :param limit: number of frame to download from now unitl limit
+    :param fields: which frame field to return
+    :param tags:
+    :param debug:
+    :param time__gte: start date to downlaod (in datetime format) (gte = great than equal)
+    :param time__lte: end date to download (in datetime format)   (lte = less than equal)
+    :param kw: orther query parameter such as serial (waspmote serial number)
+    :return: a Json object containing the requested data to the server
+    '''
 
-def query_df(limit=100, serial=None, fields=None, tags=None, tst__gte=None, tst__lte=None, debug=False):
+    # Parameters
+    if time__gte:
+        time__gte = time__gte.timestamp()
+    if time__lte:
+        time__lte = time__lte.timestamp()
+    if time__gte and time__lte:
+        limit = None
 
-    # Paramters
-    resp = query(
-        limit=limit, serial=serial,  fields=fields,  tags=tags,  debug=debug,  time__gte=tst__gte, time__lte=tst__lte)
+    params = {
+        'limit': limit,               # Pagination
+        'time__gte': time__gte, 'time__lte': time__lte, # Time filter
+        'fields': fields,
+        'tags': tags,
+    }
 
-    df = json_normalize(resp['results'])  # convert json object to pandas dataframe
+    # Filter inside json
+    for key, value in kw.items():
+        if value is None:
+            params[key] = None
+            continue
+
+        if type(value) is datetime.datetime:
+            value = int(value.timestamp())
+
+        if isinstance(value, int):
+            key += ':int'
+
+        params[key] = value
+
+    # Query
+    headers = {'Authorization': 'Token %s' % TOKEN}
+    print(params)
+    response = requests.get(URL, headers=headers, params=params)
+    response.raise_for_status()
+    json = response.json()
+
+    # Debug
+    if debug:
+        pprint.pprint(params)
+        pprint.pprint(json)
+        print()
+
+    df = json_normalize(json['results'])  # convert json object to pandas dataframe
     try:
         df['timestamp'] = pd.to_datetime(df.epoch, unit='s')
     except:
         print('WARNING: no epoch')
     return df
+#
+# def query_df(limit=100, serial=None, fields=None, tags=None, tst__gte=None, tst__lte=None, debug=False, **kw):
+#
+#     # Paramters
+#     resp = query(
+#         limit=limit, serial=serial,  fields=fields,  tags=tags,  debug=debug,  time__gte=tst__gte, time__lte=tst__lte)
+#
+#     df = json_normalize(resp['results'])  # convert json object to pandas dataframe
+#     try:
+#         df['timestamp'] = pd.to_datetime(df.epoch, unit='s')
+#     except:
+#         print('WARNING: no epoch')
+#     return df
 
 
 if __name__ == '__main__':
