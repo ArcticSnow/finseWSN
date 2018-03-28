@@ -1,0 +1,19 @@
+Variable;Unit;Sensor;Short name;Pd_name;dtype;Replicate;Comments
+TIMESTAMP;TS;CR6;Time;time;;;UTC
+RECORD;RN;CR6;Record number;record;int;;
+panel_tmpr;degC;CR6;CR6 temperature;t_cr6;float;;
+A116_panel_tmpr;degC;A116;A116 temperature;t_a116;float;;
+batt_CR6;V;CR6;Logger voltage;v_logger;float;;
+process_time;us;CR6;Procressing time;process_time;;;
+buff_depth;scans;CR6;Buffer depth;buff_depth;;;
+FTPResult_Biomet;;CR6;FTP send result Biomet;FTPResult_Biomet;;;
+FTPResult_StationStatus;;CR6;FTP send result Status;FTPResult_StationStatus;;;
+T_nr;degC;CNR4;CNR4 temperature;T_cnr4;float;;
+T_K_nr;K;CNR4;CNR4 temperature;T_K_cnr4;float;;
+Rl_down_meas;;CNR4;Uncorrected longwave radiation;Rl_down_meas;float;;
+Rl_up_meas;;CNR4;Uncorrected longwave radiation;Rl_up_meas;float;;
+pulse_CNR4_Tot;;CNR4;CNR4 ventiator pulse count;pulse_CNR4_Tot;;;
+shf_cal(1);W/(m^2 mV);Hukseflux;Ground heat flux calibration coefficient;gnd_calib_coef_1;float;1;from self-calibration
+shf_cal(2);W/(m^2 mV);Hukseflux;Ground heat flux calibration coefficient;gnd_calib_coef_2;float;2;from self-calibration
+shf_cal_on_f;;Hukseflux;Ground heat flux calibration flag;gnd_calib_flag;;;currently performed once per week
+sw12_1_state;;Hukseflux;Ground heat flux calibration state;gnd_calib_state;;;

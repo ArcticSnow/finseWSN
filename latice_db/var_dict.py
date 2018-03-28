@@ -67,7 +67,9 @@ CR6_biomet_perm = {'BEC_99_99_3_1_1':'bec',
                    'table_name':'table_name',
                    'time':'time'}
 
+CR6_biomet_perm_unit = {}
 
+CR6_biomet_perm_description = {}
 
 
 

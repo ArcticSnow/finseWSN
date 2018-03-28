@@ -1,0 +1,48 @@
+Variable;Unit;Sensor;Short_name;Pd_name;dtype;Replicate;Comments
+TIMESTAMP;TS;CR6;Time;time;str;;UTC
+RECORD;RN;CR6;Record number;record;int;;
+PA_4_2_1_1_1;kPa;Young 61302V;Air pressure;pa;float;;
+VIN_18_39_1_1_1;V;CR6;Logger voltage;vin;float;;
+RH_19_3_1_2_1;%;HMP155a;Relative humidity (10m);rh10;float;2;At 10 m
+TA_2_1_1_1_1;degC;;Air temperature;ta_1;float;1;Via met.no, 10 or 2m?
+TA_2_1_1_2_1;degC;;Air temperature;ta_2;float;2;Via met.no, 10 or 2m?
+TS_2_38_1_1_1;degC;;Soil temperature;tsoil_metno;float;;Via met.no
+TSS_2_99_1_1_1;degC;;Surface temperature;tss;float;;Via met.no
+RH_19_3_1_1_1;%;;Relative humidity (2m);rh2;float;1;Via met.no
+WS_16_33_1_1_1;m/s;Gill;Wind speed (10m);ws10;float;;At 10 m, via Met.no
+WD_20_35_1_1_1;degree;Gill;Wind direction (10m);wd10;float;;At 10 m, via Met.no
+METNORR_99_99_1_1_1;mm;Geonor gauge;Precipitation;precip;float;;Via Met.no
+METNOR_99_99_1_1_1;mm;Geonor gauge;Precipitation;precip_tot;float;;Via Met.no
+METNORA_99_99_1_1_1;mm;Geonor gauge;Last minute median precip;precip_median;float;;Via Met.no
+METNOS_99_99_1_1_1;cm;;Snow depth;sd;float;;Via Met.no
+SWIN_6_10_1_1_1;W/m^2;CNR4;Shortwave incomming radiation;swin;float;;
+SWOUT_6_11_1_1_1;W/m^2;CNR4;Shortwave outgoing radiation;swout;float;;
+LWIN_6_14_1_1_1;W/m^2;CNR4;Longwave incomming radiation;lwin;float;;
+LWOUT_6_15_1_1_1;W/m^2;CNR4;Longwave outgoing radiation;lwout;float;;
+TS_2_38_2_1_1;degC;TCAV;Soil temperature;tsoil_4therm;float;;Average of 4 thermistors
+SWC_12_36_3_1_1;m^3/m^3;CS650;Soil water content;swc;float;;
+BEC_99_99_3_1_1;dS/m;CS650;Bulk electrical conductivity;bec;float;;
+TS_2_38_3_1_1;degC;CS650;Soil temperature;Tsoil_cs650;float;;
+PERMITTIVITY_99_99_3_1_1;rel;CS650;Relative dielectric permittivity;permittivity;float;;
+CS650PERIOD_99_99_3_1_1;usec;CS650;CS650 period;cs650_period;float;;
+CS650VRATIO_99_99_3_1_1;rel;CS650;CS650 voltage ratio;cs650_vratio;float;;
+SHF_6_37_1_1_1;W/m^2;Hukseflux;Ground heat flux;gnd_heat_1;float;1;
+SHF_6_37_2_1_1;W/m^2;Hukseflux;Ground heat flux;gnd_heat_2;float;2;
+SHF_99_37_1_1_2;mV;Hukseflux;Ground heat flux raw signal;gnd_raw_1;float;1;
+SHF_99_37_2_1_2;mV;Hukseflux;Ground heat flux raw signal;gnd_raw_2;float;2;
+FC1DRIFTmin_99_99_1_1_1;g/m^2/s;Flowcapt;Snow drift min;fc1_drift_min;float;1;
+FC1DRIFTmean_99_99_1_1_1;g/m^2/s;Flowcapt;Snow drift mean;fc1_drift_mean;float;1;
+FC1DRIFTmax_99_99_1_1_1;g/m^2/s;Flowcapt;Snow drift max;fc1_drift_max;float;1;
+FC1DRIFTstd_99_99_1_1_1;g/m^2/s;Flowcapt;Snow drift std;fc1_drift_std;float;1;
+FC1DRIFTsum_99_99_1_1_1;g/m^2/s;Flowcapt;Snow drift sum;fc1_drift_sum;float;1;
+FC1WSmin_16_99_1_1_1;m/s;Flowcapt;Wind speed min;fc1_ws_min;float;1;
+FC1WSmean_16_99_1_1_1;m/s;Flowcapt;Wind speed mean;fc1_ws_mean;float;1;
+FC1WSmax_16_99_1_1_1;m/s;Flowcapt;Wind speed max;fc1_ws_max;float;1;
+FC2DRIFTmin_99_99_1_1_1;g/m^2/s;Flowcapt;Snow drift min;fc2_drift_min;float;2;
+FC2DRIFTmean_99_99_1_1_1;g/m^2/s;Flowcapt;Snow drift mean;fc2_drift_mean;float;2;
+FC2DRIFTmax_99_99_1_1_1;g/m^2/s;Flowcapt;Snow drift max;fc2_drift_max;float;2;
+FC2DRIFTstd_99_99_1_1_1;g/m^2/s;Flowcapt;Snow drift std;fc2_drift_std;float;2;
+FC2DRIFTsum_99_99_1_1_1;g/m^2/s;Flowcapt;Snow drift sum;fc2_drift_sum;float;2;
+FC2WSmin_16_99_1_1_1;m/s;Flowcapt;Wind speed min;fc2_ws_min;float;2;
+FC2WSmean_16_99_1_1_1;m/s;Flowcapt;Wind speed mean;fc2_ws_mean;float;2;
+FC2WSmax_16_99_1_1_1;m/s;Flowcapt;Wind speed max;fc2_ws_max;float;2;

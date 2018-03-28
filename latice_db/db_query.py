@@ -9,6 +9,8 @@ URL = 'https://hycamp.org/wsn/api/query/v2/'
 #URL = 'http://localhost:8000/wsn/api/query/v2/'
 TOKEN = os.getenv('WSN_TOKEN')
 
+path = os.getcwd()
+
 def query(
     limit=100, # Pagination
     fields=None,         # Fields to return (all by default)
@@ -143,24 +145,14 @@ def query_df(
 
     df = json_normalize(json['results'])  # convert json object to pandas dataframe
     try:
-        df['timestamp'] = pd.to_datetime(df.epoch, unit='s')
+        df.time = pd.to_datetime(df.time, unit='s')
     except:
-        print('WARNING: no epoch')
+        print('WARNING: no timestamp')
     return df
-#
-# def query_df(limit=100, serial=None, fields=None, tags=None, tst__gte=None, tst__lte=None, debug=False, **kw):
-#
-#     # Paramters
-#     resp = query(
-#         limit=limit, serial=serial,  fields=fields,  tags=tags,  debug=debug,  time__gte=tst__gte, time__lte=tst__lte)
-#
-#     df = json_normalize(resp['results'])  # convert json object to pandas dataframe
-#     try:
-#         df['timestamp'] = pd.to_datetime(df.epoch, unit='s')
-#     except:
-#         print('WARNING: no epoch')
-#     return df
 
+def biomet_metadata():
+    meta = pd.read_csv(path + '/FINSE-stationary_variables_biomet.csv', sep=';')
+    return meta
 
 if __name__ == '__main__':
     # We need an authentication token
