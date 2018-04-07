@@ -106,8 +106,7 @@ def query_df(
         time__gte = time__gte.timestamp()
     if time__lte:
         time__lte = time__lte.timestamp()
-    if time__gte and time__lte:
-        limit = None
+    
 
     params = {
         'limit': limit,               # Pagination
@@ -145,7 +144,7 @@ def query_df(
 
     df = json_normalize(json['results'])  # convert json object to pandas dataframe
     try:
-        df.time = pd.to_datetime(df.time, unit='s')
+        df.time = pd.to_datetime(df.time)
     except:
         print('WARNING: no timestamp')
     return df
