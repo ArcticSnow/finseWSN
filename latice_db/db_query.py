@@ -5,7 +5,7 @@ import requests
 from pandas.io.json import json_normalize
 import pandas as pd
 
-URL = 'https://hycamp.org/wsn/api/query/v2/'
+URL = 'https://wsn.latice.eu/api/query/v2/'
 #URL = 'http://localhost:8000/wsn/api/query/v2/'
 TOKEN = os.getenv('WSN_TOKEN')
 
