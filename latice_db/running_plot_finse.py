@@ -14,14 +14,19 @@ import numpy as np
 #=============================================
 #   1. import latest 3 days of data into datarame format
 
-TOKEN = os.getenv('WSN_TOKEN')
+TOKEN = os.getenv('WSN_TOKEN', 'dcff0c629050b5492362ec28173fa3e051648cb1')
 plot_path = ''
 
-start = datetime.datetime.now() - datetime.timedelta(days=3)
+start = datetime.datetime.now() - datetime.timedelta(days=25)
 end = datetime.datetime.now()
+
+# Get data from CR6
+serial = 3668
+df_flux = db.query_df(serial=serial, table_name='Biomet', time__gte=start, time__lte=end, limit=100)
+
+
+# Get data from
 serial = 3390197892757083161
-
-
 df_therm = db.query_df(serial=serial, time__gte=start, time__lte=end, limit=10000)
 df_therm_string = df_therm.loc[np.isnan(df_therm.rssi)]
 df_therm_string['tempString'] = df_therm_string.ds1820.apply(np.array)
@@ -45,7 +50,10 @@ df_thomas_rssi = df_thomas.loc[~np.isnan(df_thomas.rssi)]
 df_thomas_rssi = df_thomas_rssi.reset_index()
 
 
-
+serial = 6951419298100303058
+df_middal = db.query_df(serial=serial, time__gte=start, time__lte=end, limit=10000)
+df_middal_depth = df_middal.loc[~np.isnan(df_middal.ctd_depth)]
+df_middal_depth = df_middal_depth.reset_index()
 
 #=============================================
 #   2. plot data
@@ -130,3 +138,17 @@ plt.legend()
 plt.savefig('battery_level.png')
 
 
+#===================================
+# Discharge station
+
+fig, ax = plt.subplots(3,1, sharex=True, figsize=(20,12))
+
+ax[0].plot(df_middal_depth.time, df_middal_depth.ctd_depth/10)
+ax[0].set_ylabel('Water depth [cm]')
+
+ax[1].plot(df_middal_depth.time, df_middal_depth.ctd_temp)
+ax[1].set_ylabel('Water temperature [deg]')
+
+ax[2].plot(df_middal_depth.time, df_middal_depth.ctd_cond)
+ax[2].set_ylabel('Water conductivity [dS/m]')
+plt.savefig('middalselvi_water.png')
