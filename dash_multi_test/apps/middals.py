@@ -1,12 +1,14 @@
-import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Output, Input
+from app import app
 
 import numpy as np
 import db_query as db
-
 import datetime
+
+
+serial = 6951419298100303058
 
 
 def generate_table(dataframe, max_rows=10):
@@ -21,11 +23,9 @@ def generate_table(dataframe, max_rows=10):
     )
 
 
-app = dash.Dash()
 
-
-app.layout = html.Div(children=[
-    html.Div([html.Link(href='static/whitey.css', rel='stylesheet')]),
+layout = html.Div(children=[
+    html.Div([html.Link(href='/static/whitey.css', rel='stylesheet')]),
     dcc.Markdown('''
 # Middalselvi Discharge Station
 
@@ -44,6 +44,7 @@ Located along the stream running out of middalsbreen, this discharge station rec
 ''' ),
     dcc.Slider(id='ndays', min=2, max=32, step=2, value=14,marks={i: '{} days'.format(i) for i in range(2,30,2)}),
     html.Div(id='output_graphs'),
+dcc.Link('Go to Home', href='index'),
     dcc.Markdown('''
 ## Page future development:
 - Example to pull data from DB
@@ -52,6 +53,10 @@ Located along the stream running out of middalsbreen, this discharge station rec
 - get shared x-axis for the three plots
 - have an input box setting the start and final date to display, default being 15 days until now
 - Go multi-page, one for each station
+
+---
+## Return to [Home](index)
+
 ''')
 ])
 
@@ -65,13 +70,13 @@ def update_graph_table(input_ndays):
     start = datetime.datetime.now() - datetime.timedelta(days=input_ndays)
     end = datetime.datetime.now()
 
-    serial = 6951419298100303058
+
     df_middal = db.query_df(serial=serial, time__gte=start, time__lte=end, limit=100000)
     df = df_middal.loc[~np.isnan(df_middal.ctd_depth)]
     df = df.reset_index()
     df.ctd_cond.loc[df.ctd_cond < 0.01] = np.nan
 
-    uu = html.Div([
+    graph_content = html.Div([
         html.H2(children='Water Discharge'),
         dcc.Graph(
             id='gr1',
@@ -100,18 +105,9 @@ def update_graph_table(input_ndays):
                 'layout': {'yaxis': {'title': 'Electrical conductivity [dS/m]'}}
             }),
         html.H2(children='Table head of Middalselvi data stream'),
-        generate_table(df, 5)]
+        generate_table(df.tail(100), 5)]
     )
-    return uu
+    return graph_content
 
 
 
-
-#app.css.append_css({'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'})
-#app.css.append_css({'external_url':'https://raw.githubusercontent.com/oxalorg/sakura/master/css/sakura.css'})
-app.scripts.config.serve_locally=True
-app.css.config.serve_locally=True
-
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
