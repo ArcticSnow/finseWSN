@@ -13,24 +13,14 @@ TOKEN = os.getenv('WSN_TOKEN', 'dcff0c629050b5492362ec28173fa3e051648cb1')
 path = os.getcwd()
 
 def query(
-    limit=100, # Pagination
+    limit=100,           # Pagination
     fields=None,         # Fields to return (all by default)
     tags=None,           # Tags to return (all by default)
+    interval=None,       # If given will return the average in the interval
     debug=False,         # Not sent to the API
     # Filters
     time__gte=None, time__lte=None, # Time is special
     **kw):
-    '''
-
-    :param limit: number of frame to download from now unitl limit
-    :param fields: which frame field to return
-    :param tags:
-    :param debug:
-    :param time__gte: start date to downlaod (in datetime format) (gte = great than equal)
-    :param time__lte: end date to download (in datetime format)   (lte = less than equal)
-    :param kw: orther query parameter such as serial (waspmote serial number)
-    :return: a Json object containing the requested data to the server
-    '''
 
     # Parameters
     if time__gte:
@@ -39,10 +29,11 @@ def query(
         time__lte = time__lte.timestamp()
 
     params = {
-        'limit': limit,               # Pagination
+        'limit': limit,                                 # Pagination
         'time__gte': time__gte, 'time__lte': time__lte, # Time filter
         'fields': fields,
         'tags': tags,
+        'interval': interval,
     }
 
     # Filter inside json
@@ -61,7 +52,6 @@ def query(
 
     # Query
     headers = {'Authorization': 'Token %s' % TOKEN}
-    print(params)
     response = requests.get(URL, headers=headers, params=params)
     response.raise_for_status()
     json = response.json()
@@ -83,37 +73,26 @@ def get_token():
         sys.exit(1)
 
 def query_df(
-    limit=100, # Pagination
-    fields=None,         # Fields to return (all by default)
-    tags=None,           # Tags to return (all by default)
-    debug=False,         # Not sent to the API
-    # Filters
-    time__gte=None, time__lte=None, # Time is special
-    **kw):
-    '''
-
-    :param limit: number of frame to download from now unitl limit
-    :param fields: which frame field to return
-    :param tags:
-    :param debug:
-    :param time__gte: start date to downlaod (in datetime format) (gte = great than equal)
-    :param time__lte: end date to download (in datetime format)   (lte = less than equal)
-    :param kw: orther query parameter such as serial (waspmote serial number)
-    :return: a Json object containing the requested data to the server
-    '''
-
+        limit=100,  # Pagination
+        fields=None,  # Fields to return (all by default)
+        tags=None,  # Tags to return (all by default)
+        interval=None,  # If given will return the average in the interval
+        debug=False,  # Not sent to the API
+        # Filters
+        time__gte=None, time__lte=None,  # Time is special
+        **kw):
     # Parameters
     if time__gte:
         time__gte = time__gte.timestamp()
     if time__lte:
         time__lte = time__lte.timestamp()
-    
 
     params = {
-        'limit': limit,               # Pagination
-        'time__gte': time__gte, 'time__lte': time__lte, # Time filter
+        'limit': limit,  # Pagination
+        'time__gte': time__gte, 'time__lte': time__lte,  # Time filter
         'fields': fields,
         'tags': tags,
+        'interval': interval,
     }
 
     # Filter inside json
@@ -132,7 +111,6 @@ def query_df(
 
     # Query
     headers = {'Authorization': 'Token %s' % TOKEN}
-    print(params)
     response = requests.get(URL, headers=headers, params=params)
     response.raise_for_status()
     json = response.json()
@@ -159,7 +137,7 @@ if __name__ == '__main__':
     TOKEN = os.getenv('WSN_TOKEN', 'dcff0c629050b5492362ec28173fa3e051648cb1')
 
     # Number of elements to return in every query
-    limit = 2
+    limit = 100
 
     # Example 1: Get all the fields and tags of a given mote from a given time.
     # This is good to explore the data, but bad on performance.
@@ -195,3 +173,10 @@ if __name__ == '__main__':
         fields=['received'],
         debug=True,
 )
+    # Example 5: Get the battery once every hour
+    response = query(limit=10,
+                     serial=0x1F566F057C105487,
+                     fields=['bat'],
+                     interval=3600,
+                     debug=True,
+                     )
